@@ -10,4 +10,4 @@ It simulates life using four simple rules:
 
 It sounds pretty simple, but these four rules can lead to chaotic and unpredictable behavior, even when the initial conditions are fully known.
 
-![Demonstration](https://i.imgur.com/ena09te.mp4)
+![Demonstration](gif.gif)
