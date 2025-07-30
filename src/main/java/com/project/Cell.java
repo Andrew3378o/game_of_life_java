@@ -4,7 +4,7 @@ import static com.project.Constants.*;
 import java.util.Random;;
 
 public class Cell {
-    private int state;
+    public int state;
 
     public Cell(int state){
         this.state = state;
@@ -109,5 +109,31 @@ public class Cell {
         }
 
         return grid;
+    }
+
+    public static int countAliveCells(Cell[][] cells){
+        int n = cells.length;
+        int m = cells[0].length;
+        int count = 0;
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                count += cells[i][j].state;
+            }
+        }
+
+        return count;
+    }
+
+    public static Cell[][] init(int n, int m){
+        Cell[][] cells = new Cell[n][m];
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                cells[i][j] = new Cell(DEAD);
+            }
+        }
+
+        return cells;
     }
 }
