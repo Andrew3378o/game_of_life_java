@@ -2,28 +2,37 @@ package com.project;
 
 import static com.project.Constants.*;
 import static com.project.Cell.*;
+import static java.lang.Thread.*;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args){
-        Cell[][] cells = {
-                {new Cell(DEAD), new Cell(DEAD), new Cell(DEAD), new Cell(DEAD)},
-                {new Cell(DEAD), new Cell(ALIVE), new Cell(ALIVE), new Cell(ALIVE)},
-                {new Cell(ALIVE), new Cell(ALIVE), new Cell(ALIVE), new Cell(DEAD)},
-                {new Cell(DEAD), new Cell(DEAD), new Cell(DEAD), new Cell(DEAD)}
-        };
+    public static void main(String[] args) throws InterruptedException, IOException {
+        Scanner scanner = new Scanner(System.in);
+        int counter = 0;
+        Cell[][] cells = random(ROWS, COLS);
 
-        System.out.println("Step #0");
+        while (true) {
+            update(cells);
+            System.out.println("Step #" + counter++);
+            print(cells);
+            if (System.in.available() > 0) break;
+            sleep(DELAY);
+            clear();
+        }
 
-        print(cells);
+        scanner.close();
+    }
 
-        System.out.println("Step #1");
-
-        update(cells);
-        print(cells);
-
-        System.out.println("Step #2");
-
-        update(cells);
-        print(cells);
+    public static void clear() {
+        try {
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+        } catch (Exception e) {
+            System.out.println("Unable to clear console.");
+        }
     }
 }

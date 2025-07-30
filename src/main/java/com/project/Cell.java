@@ -1,6 +1,7 @@
 package com.project;
 
 import static com.project.Constants.*;
+import java.util.Random;;
 
 public class Cell {
     private int state;
@@ -71,20 +72,42 @@ public class Cell {
         int n = grid.length;
         int m = grid[0].length;
 
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < m; j++){
-                System.out.print("[");
+        System.out.print("+");
+        for(int i = 0; i < m; i++){
+            System.out.print("-");
+        }
+        System.out.print("+\n");
 
+        for(int i = 0; i < n; i++){
+            System.out.print("|");
+            for(int j = 0; j < m; j++){
                 if(grid[i][j].state == DEAD){
                     System.out.print(" ");
                 }
                 else{
-                    System.out.print("#");
+                    System.out.print("■");
                 }
-
-                System.out.print("]");
             }
-            System.out.println();
+            System.out.println("|");
         }
+
+        System.out.print("+");
+        for(int i = 0; i < m; i++){
+            System.out.print("-");
+        }
+        System.out.print("+\n");
+    }
+
+    public static Cell[][] random(int n, int m){
+        Cell[][] grid = new Cell[n][m];
+        Random rand = new Random();
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                grid[i][j] = new Cell(rand.nextDouble() < PROBABILITY ? ALIVE: DEAD);
+            }
+        }
+
+        return grid;
     }
 }
