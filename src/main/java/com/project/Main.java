@@ -2,6 +2,7 @@ package com.project;
 
 import static com.project.Constants.*;
 import static com.project.Cell.*;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -9,6 +10,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -16,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.io.*;
 
 public class Main extends Application {
 
@@ -48,32 +51,26 @@ public class Main extends Application {
         }
 
         Button startButton = new Button("START");
-        startButton.setPrefWidth(120);
-        startButton.setPrefHeight(40);
-
         Button stopButton = new Button("STOP");
-        stopButton.setPrefWidth(120);
-        stopButton.setPrefHeight(40);
-
         Button resetButton = new Button("RESET");
-        resetButton.setPrefWidth(120);
-        resetButton.setPrefHeight(40);
-
         Button randomButton = new Button("RANDOM");
-        randomButton.setPrefWidth(120);
-        randomButton.setPrefHeight(40);
-
         Button exitButton = new Button("EXIT");
-        exitButton.setPrefWidth(120);
-        exitButton.setPrefHeight(40);
 
+        Slider speedSlider = new Slider(1, 30, 3);
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+        speedSlider.setMajorTickUnit(1);
+        speedSlider.setMinorTickCount(0);
+        speedSlider.setSnapToTicks(true);
+
+        Label speedLabel = new Label("Speed:");
         Label population = new Label();
         population.setText("Current population: " + countAliveCells(cells));
 
         startButton.setOnAction(_ -> {
             if(timeline != null) timeline.stop();
 
-            timeline = new Timeline(new KeyFrame(Duration.millis(DELAY), _ -> {
+            timeline = new Timeline(new KeyFrame(Duration.millis(1000 / speedSlider.getValue()), _ -> {
                 Cell.update(cells);
                 population.setText("Current population: " + countAliveCells(cells));
                 for(int i = 0; i < ROWS; i++){
@@ -108,12 +105,26 @@ public class Main extends Application {
             population.setText("Current population: " + countAliveCells(cells));
         });
 
+        speedSlider.valueProperty().addListener((_, _, newVal) -> {
+            if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
+                timeline.stop();
+                timeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(1000 / newVal.doubleValue()), _ -> {
+                    update(cells);
+                    updateCells();
+                    population.setText("Current population: " + countAliveCells(cells));
+                }));
+                timeline.play();
+            }
+        });
+
         exitButton.setOnAction(_ -> Platform.exit());
 
         VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton, exitButton, population);
-        HBox mainBox = new HBox(10, grid, buttonsBox);
+        VBox sliderBox = new VBox(5, grid, speedLabel, speedSlider);
+        HBox mainBox = new HBox(10, sliderBox, buttonsBox);
 
         Scene scene = new Scene(mainBox);
+        scene.getStylesheets().add(new File("src/main/resources/style.css").toURI().toString());
         stage.setScene(scene);
 
         stage.show();
