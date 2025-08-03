@@ -5,6 +5,7 @@ import static com.project.Cell.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -62,6 +63,10 @@ public class Main extends Application {
         randomButton.setPrefWidth(120);
         randomButton.setPrefHeight(40);
 
+        Button exitButton = new Button("EXIT");
+        exitButton.setPrefWidth(120);
+        exitButton.setPrefHeight(40);
+
         Label population = new Label();
         population.setText("Current population: " + countAliveCells(cells));
 
@@ -103,7 +108,9 @@ public class Main extends Application {
             population.setText("Current population: " + countAliveCells(cells));
         });
 
-        VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton, population);
+        exitButton.setOnAction(_ -> Platform.exit());
+
+        VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton, exitButton, population);
         HBox mainBox = new HBox(10, grid, buttonsBox);
 
         Scene scene = new Scene(mainBox);
