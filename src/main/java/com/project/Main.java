@@ -1,12 +1,13 @@
 package com.project;
 
 import static com.project.Constants.*;
-import java.io.IOException;
+import static com.project.Cell.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -41,7 +42,7 @@ public class Main extends Application {
                 });
 
                 rectangles[i][j] = cell;
-                grid.add(cell, i, j);
+                grid.add(cell, j, i);
             }
         }
 
@@ -61,11 +62,15 @@ public class Main extends Application {
         randomButton.setPrefWidth(120);
         randomButton.setPrefHeight(40);
 
+        Label population = new Label();
+        population.setText("Current population: " + countAliveCells(cells));
+
         startButton.setOnAction(_ -> {
             if(timeline != null) timeline.stop();
 
             timeline = new Timeline(new KeyFrame(Duration.millis(DELAY), _ -> {
                 Cell.update(cells);
+                population.setText("Current population: " + countAliveCells(cells));
                 for(int i = 0; i < ROWS; i++){
                     for(int j = 0; j < COLS; j++){
                         rectangles[i][j].setFill(cells[i][j].state == ALIVE ? Color.BLACK: Color.WHITE);
@@ -88,15 +93,17 @@ public class Main extends Application {
                     rectangles[i][j].setFill(Color.WHITE);
                 }
             }
+            population.setText("Current population: " + countAliveCells(cells));
         });
 
         randomButton.setOnAction(_ ->{
             if(timeline != null) timeline.stop();
             cells = Cell.random(ROWS, COLS);
             updateCells();
+            population.setText("Current population: " + countAliveCells(cells));
         });
 
-        VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton);
+        VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton, population);
         HBox mainBox = new HBox(10, grid, buttonsBox);
 
         Scene scene = new Scene(mainBox);
@@ -113,7 +120,7 @@ public class Main extends Application {
         }
     }
     
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args){
         launch(args);
     }
 }
