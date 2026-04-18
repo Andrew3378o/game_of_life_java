@@ -40,7 +40,7 @@ public class Main extends Application {
                 cell.setStroke(Color.LIGHTGRAY);
 
                 int ii = i, jj = j;
-                cell.setOnMouseClicked(_ -> {
+                cell.setOnMouseClicked(event -> {
                     cells[ii][jj].state = 1 - cells[ii][jj].state;
                     cell.setFill(cells[ii][jj].state == ALIVE ? Color.BLACK: Color.WHITE);
                 });
@@ -67,10 +67,10 @@ public class Main extends Application {
         Label population = new Label();
         population.setText("Current population: " + countAliveCells(cells));
 
-        startButton.setOnAction(_ -> {
+        startButton.setOnAction(e -> {
             if(timeline != null) timeline.stop();
 
-            timeline = new Timeline(new KeyFrame(Duration.millis(1000 / speedSlider.getValue()), _ -> {
+            timeline = new Timeline(new KeyFrame(Duration.millis(1000 / speedSlider.getValue()), event -> {
                 Cell.update(cells);
                 population.setText("Current population: " + countAliveCells(cells));
                 for(int i = 0; i < ROWS; i++){
@@ -84,11 +84,11 @@ public class Main extends Application {
             timeline.play();
         });
 
-        stopButton.setOnAction(_ -> {
+        stopButton.setOnAction(e -> {
             if(timeline != null) timeline.stop();
         });
 
-        resetButton.setOnAction(_ ->{
+        resetButton.setOnAction(e ->{
             for(int i = 0; i < ROWS; i++){
                 for(int j = 0; j < COLS; j++){
                     cells[i][j].state = DEAD;
@@ -98,17 +98,17 @@ public class Main extends Application {
             population.setText("Current population: " + countAliveCells(cells));
         });
 
-        randomButton.setOnAction(_ ->{
+        randomButton.setOnAction(e ->{
             if(timeline != null) timeline.stop();
             cells = Cell.random(ROWS, COLS);
             updateCells();
             population.setText("Current population: " + countAliveCells(cells));
         });
 
-        speedSlider.valueProperty().addListener((_, _, newVal) -> {
+        speedSlider.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (timeline != null && timeline.getStatus() == Animation.Status.RUNNING) {
                 timeline.stop();
-                timeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(1000 / newVal.doubleValue()), _ -> {
+                timeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(1000 / newVal.doubleValue()), event -> {
                     update(cells);
                     updateCells();
                     population.setText("Current population: " + countAliveCells(cells));
@@ -117,7 +117,7 @@ public class Main extends Application {
             }
         });
 
-        exitButton.setOnAction(_ -> Platform.exit());
+        exitButton.setOnAction(e -> Platform.exit());
 
         VBox buttonsBox = new VBox(10, startButton, stopButton, resetButton, randomButton, exitButton, population);
         VBox sliderBox = new VBox(5, grid, speedLabel, speedSlider);
